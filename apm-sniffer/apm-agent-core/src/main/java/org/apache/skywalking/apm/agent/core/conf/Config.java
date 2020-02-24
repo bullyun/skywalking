@@ -124,7 +124,7 @@ public class Config {
         /**
          * grpc channel status check interval
          */
-        public static long GRPC_CHANNEL_CHECK_INTERVAL = 30;
+        public static long GRPC_CHANNEL_CHECK_INTERVAL = 5;
         /**
          * service and endpoint registry check interval
          */

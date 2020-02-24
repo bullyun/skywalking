@@ -29,10 +29,12 @@ import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.skywalking.apm.agent.core.boot.BootService;
 import org.apache.skywalking.apm.agent.core.boot.DefaultImplementor;
 import org.apache.skywalking.apm.agent.core.boot.DefaultNamedThreadFactory;
 import org.apache.skywalking.apm.agent.core.conf.Config;
+import org.apache.skywalking.apm.agent.core.conf.SnifferConfigInitializer;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.util.RunnableWithExceptionProtection;
@@ -65,7 +67,6 @@ public class GRPCChannelManager implements BootService, Runnable {
             logger.error("Agent will not uplink any data.");
             return;
         }
-        grpcServers = Arrays.asList(Config.Collector.BACKEND_SERVICE.split(","));
         connectCheckFuture = Executors
             .newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("GRPCChannelManager"))
             .scheduleAtFixedRate(new RunnableWithExceptionProtection(this, new RunnableWithExceptionProtection.CallbackWhenException() {
@@ -96,6 +97,17 @@ public class GRPCChannelManager implements BootService, Runnable {
     public void run() {
         logger.debug("Selected collector grpc service running, reconnect:{}.", reconnect);
         if (reconnect) {
+
+            try {
+                SnifferConfigInitializer.initialize(null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (Config.Agent.SERVICE_NAME.equals("null")) {
+                return;
+            }
+
+            List<String> grpcServers = Arrays.asList(Config.Collector.BACKEND_SERVICE.split(","));
             if (grpcServers.size() > 0) {
                 String server = "";
                 try {

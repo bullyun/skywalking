@@ -40,6 +40,7 @@ public class SnifferConfigInitializer {
     private static String DEFAULT_CONFIG_FILE_NAME = "/config/agent.config";
     private static String ENV_KEY_PREFIX = "skywalking.";
     private static boolean IS_INIT_COMPLETED = false;
+    private static String AGENT_OPTIONS = null;
 
     /**
      * If the specified agent config path is set, the agent will try to locate the specified agent config. If the
@@ -53,6 +54,12 @@ public class SnifferConfigInitializer {
      * At the end, `agent.service_name` and `collector.servers` must not be blank.
      */
     public static void initialize(String agentOptions) throws ConfigNotFoundException, AgentPackageNotFoundException {
+        if (agentOptions == null) {
+            agentOptions = AGENT_OPTIONS;
+        } else {
+            AGENT_OPTIONS = agentOptions;
+        }
+
         InputStreamReader configFileStream;
 
         try {

@@ -372,6 +372,7 @@
                         <exclude>**/skywalking-ui/.editorconfig</exclude>
                         <!-- UI ignore -->
                         <exclude>**/skywalking-ui/.browserslistrc</exclude>
+                        <exclude>**/skywalking-ui/.prettierrc</exclude>
 
                         <!-- git files -->
                         <exclude>**/.gitignore</exclude>
