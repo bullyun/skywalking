@@ -97,7 +97,7 @@ Example as following
 ```
 
 ## Update the settings dynamically
-Since 6.5.0, the alarm settings can be updated dynamically at runtime by [Dynamic Configuration](dynamic-config.md),
+Since 6.5.0.11, the alarm settings can be updated dynamically at runtime by [Dynamic Configuration](dynamic-config.md),
 which will override the settings in `alarm-settings.yml`.
 
 In order to determine that whether an alarm rule is triggered or not, SkyWalking needs to cache the metrics of a time window for

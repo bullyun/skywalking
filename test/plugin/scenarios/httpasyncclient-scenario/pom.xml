@@ -23,7 +23,7 @@
 
     <groupId>org.apache.skywalking</groupId>
     <artifactId>httpasyncclient-scenario</artifactId>
-    <version>6.5.0</version>
+    <version>6.5.0.11</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

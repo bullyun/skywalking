@@ -36,7 +36,7 @@ import java.util.Map;
  * into {@link Rules} and {@link #runningContext}.
  *
  * @author kezhenxu94
- * @since 6.5.0
+ * @since 6.5.0.11
  */
 public class AlarmRulesWatcher extends ConfigChangeWatcher {
     @Getter
