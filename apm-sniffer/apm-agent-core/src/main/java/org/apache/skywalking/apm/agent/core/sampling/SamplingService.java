@@ -47,7 +47,7 @@ public class SamplingService implements BootService {
     private static final ILog logger = LogManager.getLogger(SamplingService.class);
 
     private volatile boolean on = false;
-    private volatile AtomicInteger samplingFactorHolder;
+    private volatile AtomicInteger samplingFactorHolder = new AtomicInteger(0);
     private volatile ScheduledFuture<?> scheduledFuture;
 
     @Override
@@ -124,6 +124,7 @@ public class SamplingService implements BootService {
     }
 
     private void resetSamplingFactor() {
-        samplingFactorHolder = new AtomicInteger(0);
+        //samplingFactorHolder = new AtomicInteger(0);
+        samplingFactorHolder.getAndSet(0);
     }
 }

@@ -23,7 +23,6 @@ import org.apache.skywalking.apm.agent.core.conf.RemoteDownstreamConfig;
 import org.apache.skywalking.apm.agent.core.context.trace.*;
 import org.apache.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.apache.skywalking.apm.agent.core.logging.api.*;
-import org.apache.skywalking.apm.agent.core.sampling.SamplingService;
 import org.apache.skywalking.apm.util.StringUtil;
 
 import static org.apache.skywalking.apm.agent.core.conf.Config.Agent.OPERATION_NAME_THRESHOLD;
@@ -93,15 +92,14 @@ public class ContextManager implements BootService {
         AbstractTracerContext context;
         operationName = StringUtil.cut(operationName, OPERATION_NAME_THRESHOLD);
         if (carrier != null && carrier.isValid()) {
-            SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
-            samplingService.forceSampled();
-            context = getOrCreate(operationName, true);
+            context = getOrCreate(operationName, false);
             span = context.createEntrySpan(operationName);
             context.extract(carrier);
         } else {
             context = getOrCreate(operationName, false);
             span = context.createEntrySpan(operationName);
         }
+
         return span;
     }
 
