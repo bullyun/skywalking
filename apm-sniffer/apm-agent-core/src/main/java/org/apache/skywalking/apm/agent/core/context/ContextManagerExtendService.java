@@ -22,6 +22,10 @@ import org.apache.skywalking.apm.agent.core.boot.*;
 import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.sampling.SamplingService;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * @author wusheng
  */
@@ -43,10 +47,46 @@ public class ContextManagerExtendService implements BootService {
 
     }
 
+    private List<Pattern> ignoreOperatorPatterns;
+    private String wildcardToRegex(String src) {
+        return "^" + src.replace("/", "\\/").
+                replace("?", "\\?").
+                replace(".", "\\.").
+                replace("*", ".*") + "$";
+    }
+
+    private boolean isIgnoreOperator(String operationName) {
+        if ("".equals(Config.Agent.IGNORE_OPERATOR)) {
+            return false;
+        }
+        if (ignoreOperatorPatterns == null) {
+            List<Pattern> ignoreOperatorPatterns1 = new ArrayList<Pattern>();
+
+            String[] ignoreOperators = Config.Agent.IGNORE_OPERATOR.split(",");
+            for (int i = 0;i < ignoreOperators.length;i++) {
+                ignoreOperators[i] = wildcardToRegex(ignoreOperators[i]);
+
+                try {
+                    Pattern p = Pattern.compile(ignoreOperators[i]);
+                    ignoreOperatorPatterns1.add(p);
+                } catch (Exception e) {
+                }
+            }
+            ignoreOperatorPatterns = ignoreOperatorPatterns1;
+        }
+        for (Pattern p : ignoreOperatorPatterns) {
+            if (p.matcher(operationName).matches()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public AbstractTracerContext createTraceContext(String operationName, boolean forceSampling) {
         AbstractTracerContext context;
         int suffixIdx = operationName.lastIndexOf(".");
-        if (suffixIdx > -1 && Config.Agent.IGNORE_SUFFIX.contains(operationName.substring(suffixIdx))) {
+        if ((suffixIdx > -1 && Config.Agent.IGNORE_SUFFIX.contains(operationName.substring(suffixIdx))) ||
+                isIgnoreOperator(operationName)) {
             context = new IgnoredTracerContext();
         } else {
             SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
