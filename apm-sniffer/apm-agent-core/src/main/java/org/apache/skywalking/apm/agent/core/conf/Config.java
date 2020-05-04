@@ -59,6 +59,11 @@ public class Config {
         public static int SAMPLE_N_PER_3_SECS = -1;
 
         /**
+         * Whether to do span trace
+         */
+        public static boolean IS_SPAN_TRACE = true;
+
+        /**
          * If the operation name of the first span is included in this set, this segment should be ignored.
          */
         public static String IGNORE_SUFFIX = ".jpg,.jpeg,.js,.css,.png,.bmp,.gif,.ico,.mp3,.mp4,.html,.svg";
@@ -123,6 +128,22 @@ public class Config {
          * Limit the length of the operationName to prevent errors when inserting elasticsearch
          **/
         public static int OPERATION_NAME_THRESHOLD = 500;
+
+        public static void setIsSpanTrace(boolean spanTrace) {
+            IS_SPAN_TRACE = spanTrace;
+        }
+    }
+
+    public static class Apollo {
+        /**
+         * apollo connect interval
+         */
+        public static long APOLLO_CONNECT_INTERVAL = 5;
+
+        /**
+         * Whether to get the configuration from Apollo
+         */
+        public static boolean IS_OBTAIN_APOLLO_CONFIG = false;
     }
 
     public static class Collector {
@@ -149,6 +170,15 @@ public class Config {
          * The buffer size of collected JVM info.
          */
         public static int BUFFER_SIZE = 60 * 10;
+
+        /**
+         * whether to do collect jvm info
+         */
+        public static boolean IS_COLLECT_JVM_INFO = true;
+
+        public static void setIsCollectJvmInfo(boolean collectJvmInfo) {
+            IS_COLLECT_JVM_INFO = collectJvmInfo;
+        }
     }
 
     public static class Buffer {

@@ -26,6 +26,7 @@ import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
 import net.bytebuddy.implementation.bind.annotation.This;
+import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
 import org.apache.skywalking.apm.agent.core.plugin.PluginException;
 import org.apache.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
@@ -79,8 +80,10 @@ public class InstMethodsInter {
 
         MethodInterceptResult result = new MethodInterceptResult();
         try {
-            interceptor.beforeMethod(targetObject, method, allArguments, method.getParameterTypes(),
-                result);
+            if (Config.Agent.IS_SPAN_TRACE) {
+                interceptor.beforeMethod(targetObject, method, allArguments, method.getParameterTypes(),
+                        result);
+            }
         } catch (Throwable t) {
             logger.error(t, "class[{}] before method[{}] intercept failure", obj.getClass(), method.getName());
         }
@@ -94,16 +97,20 @@ public class InstMethodsInter {
             }
         } catch (Throwable t) {
             try {
-                interceptor.handleMethodException(targetObject, method, allArguments, method.getParameterTypes(),
-                    t);
+                if (Config.Agent.IS_SPAN_TRACE) {
+                    interceptor.handleMethodException(targetObject, method, allArguments, method.getParameterTypes(),
+                            t);
+                }
             } catch (Throwable t2) {
                 logger.error(t2, "class[{}] handle method[{}] exception failure", obj.getClass(), method.getName());
             }
             throw t;
         } finally {
             try {
-                ret = interceptor.afterMethod(targetObject, method, allArguments, method.getParameterTypes(),
-                    ret);
+                if (Config.Agent.IS_SPAN_TRACE) {
+                    ret = interceptor.afterMethod(targetObject, method, allArguments, method.getParameterTypes(),
+                            ret);
+                }
             } catch (Throwable t) {
                 logger.error(t, "class[{}] after method[{}] intercept failure", obj.getClass(), method.getName());
             }

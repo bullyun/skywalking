@@ -25,6 +25,7 @@ import net.bytebuddy.implementation.bind.annotation.AllArguments;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import org.apache.skywalking.apm.agent.core.conf.Config;
 import org.apache.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
 import org.apache.skywalking.apm.agent.core.logging.api.ILog;
 import org.apache.skywalking.apm.agent.core.logging.api.LogManager;
@@ -73,7 +74,9 @@ public class StaticMethodsInter {
 
         MethodInterceptResult result = new MethodInterceptResult();
         try {
-            interceptor.beforeMethod(clazz, method, allArguments, method.getParameterTypes(), result);
+            if (Config.Agent.IS_SPAN_TRACE) {
+                interceptor.beforeMethod(clazz, method, allArguments, method.getParameterTypes(), result);
+            }
         } catch (Throwable t) {
             logger.error(t, "class[{}] before static method[{}] intercept failure", clazz, method.getName());
         }
@@ -87,14 +90,18 @@ public class StaticMethodsInter {
             }
         } catch (Throwable t) {
             try {
-                interceptor.handleMethodException(clazz, method, allArguments, method.getParameterTypes(), t);
+                if (Config.Agent.IS_SPAN_TRACE) {
+                    interceptor.handleMethodException(clazz, method, allArguments, method.getParameterTypes(), t);
+                }
             } catch (Throwable t2) {
                 logger.error(t2, "class[{}] handle static method[{}] exception failure", clazz, method.getName(), t2.getMessage());
             }
             throw t;
         } finally {
             try {
-                ret = interceptor.afterMethod(clazz, method, allArguments, method.getParameterTypes(), ret);
+                if (Config.Agent.IS_SPAN_TRACE) {
+                    ret = interceptor.afterMethod(clazz, method, allArguments, method.getParameterTypes(), ret);
+                }
             } catch (Throwable t) {
                 logger.error(t, "class[{}] after static method[{}] intercept failure:{}", clazz, method.getName(), t.getMessage());
             }

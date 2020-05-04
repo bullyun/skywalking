@@ -50,6 +50,7 @@
         <shade.io.opencensus.source>io.opencensus</shade.io.opencensus.source>
         <shade.io.opencensus.target>${shade.package}.${shade.io.opencensus.source}</shade.io.opencensus.target>
         <ststem-rules.version>1.18.0</ststem-rules.version>
+        <http-client.version>4.5.6</http-client.version>
     </properties>
 
     <dependencies>
@@ -134,6 +135,12 @@
             <artifactId>system-rules</artifactId>
             <version>${ststem-rules.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.6</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
@@ -238,6 +245,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

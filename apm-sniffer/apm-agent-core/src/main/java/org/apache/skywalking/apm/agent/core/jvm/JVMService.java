@@ -102,7 +102,7 @@ public class JVMService implements BootService, Runnable {
 
     @Override
     public void run() {
-        if (RemoteDownstreamConfig.Agent.SERVICE_ID != DictionaryUtil.nullValue()
+        if (Config.Jvm.IS_COLLECT_JVM_INFO && RemoteDownstreamConfig.Agent.SERVICE_ID != DictionaryUtil.nullValue()
             && RemoteDownstreamConfig.Agent.SERVICE_INSTANCE_ID != DictionaryUtil.nullValue()
         ) {
             long currentTimeMillis = System.currentTimeMillis();
@@ -131,7 +131,7 @@ public class JVMService implements BootService, Runnable {
 
         @Override
         public void run() {
-            if (RemoteDownstreamConfig.Agent.SERVICE_ID != DictionaryUtil.nullValue()
+            if (Config.Jvm.IS_COLLECT_JVM_INFO && RemoteDownstreamConfig.Agent.SERVICE_ID != DictionaryUtil.nullValue()
                 && RemoteDownstreamConfig.Agent.SERVICE_INSTANCE_ID != DictionaryUtil.nullValue()
             ) {
                 if (status == GRPCChannelStatus.CONNECTED) {
