@@ -98,8 +98,8 @@ public class ApolloLongPullService implements Runnable {
         notifications.add(notification);
         Gson gson = new Gson();
         String notificationsEncode = URLEncoder.encode(gson.toJson(notifications), "UTF-8");
-        String url = System.getProperty(Constants.APOLLO_CONFIG_SERVICE) + "/notifications/v2?appId="
-                + System.getProperty(Constants.SKYWALKING_APP_ID) + "&cluster="
+        String url = System.getProperty(Constants.APOLLO_META) + "/notifications/v2?appId="
+                + System.getProperty(Constants.APP_ID) + "&cluster="
                 + System.getProperty(Constants.APOLLO_CLUSTER) + "&notifications=" + notificationsEncode;
         HttpGet httpGet = new HttpGet(url);
 
@@ -141,8 +141,8 @@ public class ApolloLongPullService implements Runnable {
     }
 
     private ApolloConfiguration getLatestConfig() {
-        String url = System.getProperty(Constants.APOLLO_CONFIG_SERVICE) + "/configs/"
-                + System.getProperty(Constants.SKYWALKING_APP_ID) + "/" + System.getProperty(Constants.APOLLO_CLUSTER)
+        String url = System.getProperty(Constants.APOLLO_META) + "/configs/"
+                + System.getProperty(Constants.APP_ID) + "/" + System.getProperty(Constants.APOLLO_CLUSTER)
                 + "/" + System.getProperty(Constants.SKYWALKING_NAMESPACE);
         HttpGet httpGet = new HttpGet(url);
         String response = sendHttpRequest(httpGet);

@@ -26,8 +26,8 @@ package org.apache.skywalking.apm.agent.core.apollo;
  */
 public interface Constants {
 
-    String SKYWALKING_APP_ID = "skywalking.app.id";
-    String APOLLO_CONFIG_SERVICE = "apollo.configService";
+    String APP_ID = "app.id";
+    String APOLLO_META = "apollo.meta";
     String APOLLO_CLUSTER = "apollo.cluster";
     String SKYWALKING_NAMESPACE = "skywalking.namespace";
 

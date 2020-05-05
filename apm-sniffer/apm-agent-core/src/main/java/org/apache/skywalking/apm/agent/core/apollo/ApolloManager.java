@@ -72,8 +72,8 @@ public class ApolloManager implements BootService, Runnable {
         if (connected) {
             return;
         }
-        if (System.getProperty(Constants.SKYWALKING_APP_ID) == null
-                || System.getProperty(Constants.APOLLO_CONFIG_SERVICE) == null
+        if (System.getProperty(Constants.APP_ID) == null
+                || System.getProperty(Constants.APOLLO_META) == null
                 || System.getProperty(Constants.APOLLO_CLUSTER) == null
                 || System.getProperty(Constants.SKYWALKING_NAMESPACE) == null) {
             logger.info("apollo connect parameters are not full.");
