@@ -61,7 +61,7 @@ public class Config {
         /**
          * Whether to do span trace
          */
-        public static boolean IS_SPAN_TRACE = true;
+        public static boolean IS_SPAN_TRACE = false;
 
         /**
          * If the operation name of the first span is included in this set, this segment should be ignored.
@@ -174,7 +174,7 @@ public class Config {
         /**
          * whether to do collect jvm info
          */
-        public static boolean IS_COLLECT_JVM_INFO = true;
+        public static boolean IS_COLLECT_JVM_INFO = false;
 
         public static void setIsCollectJvmInfo(boolean collectJvmInfo) {
             IS_COLLECT_JVM_INFO = collectJvmInfo;
