@@ -103,6 +103,15 @@ public class StorageEsInstaller extends ModelInstaller {
         setting.addProperty("index.number_of_replicas", indexReplicasNumber);
         setting.addProperty("index.refresh_interval", record ? TimeValue.timeValueSeconds(10).toString() : TimeValue.timeValueSeconds(indexRefreshInterval).toString());
         setting.addProperty("analysis.analyzer.oap_analyzer.type", "stop");
+
+        //index 刷新间隔
+        //异步写硬盘，增大写的速度
+        //translog 间隔时间
+        //索引 merge 最大线程数
+        setting.addProperty("index.refresh_interval", "30s");
+        setting.addProperty("index.translog.durability", "async");
+        setting.addProperty("index.translog.sync_interval", "120s");
+        setting.addProperty("index.merge.scheduler.max_thread_count", "1");
         return setting;
     }
 

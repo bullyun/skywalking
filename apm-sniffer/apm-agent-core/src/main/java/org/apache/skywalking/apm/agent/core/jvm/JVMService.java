@@ -78,7 +78,7 @@ public class JVMService implements BootService, Runnable {
                 @Override public void handle(Throwable t) {
                     logger.error("JVMService produces metrics failure.", t);
                 }
-            }), 0, 1, TimeUnit.SECONDS);
+            }), 0, 30, TimeUnit.SECONDS);
         sendMetricFuture = Executors
             .newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("JVMService-consume"))
             .scheduleAtFixedRate(new RunnableWithExceptionProtection(sender, new RunnableWithExceptionProtection.CallbackWhenException() {
@@ -86,7 +86,7 @@ public class JVMService implements BootService, Runnable {
                     logger.error("JVMService consumes and upload failure.", t);
                 }
             }
-            ), 0, 1, TimeUnit.SECONDS);
+            ), 0, 30, TimeUnit.SECONDS);
     }
 
     @Override
