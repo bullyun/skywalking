@@ -91,7 +91,7 @@ public class ApolloLongPullService implements Runnable {
         }
     }
 
-    private void apolloLongPull() throws IOException {
+    private void apolloLongPull() throws Exception {
         List<ApolloConfigNotification> notifications = new ArrayList<>();
         ApolloConfigNotification notification = new ApolloConfigNotification(
                 System.getProperty(Constants.SKYWALKING_NAMESPACE), notificationId);
@@ -102,43 +102,45 @@ public class ApolloLongPullService implements Runnable {
                 + System.getProperty(Constants.APP_ID) + "&cluster="
                 + System.getProperty(Constants.APOLLO_CLUSTER) + "&notifications=" + notificationsEncode;
         HttpGet httpGet = new HttpGet(url);
-
-        CloseableHttpResponse response = HTTP_CLIENT.execute(httpGet);
-        if (response.getStatusLine().getStatusCode() == Constants.HTTP_200) {
-            // config have change
-            String result = EntityUtils.toString(response.getEntity());
-            if (result == null) {
-                return;
-            }
-            Type type = new TypeToken<ArrayList<ApolloConfigNotification>>() { }.getType();
-            List<ApolloConfigNotification> newNotifications = gson.fromJson(result, type);
-            if (newNotifications == null || newNotifications.size() == 0) {
-                return;
-            }
-            for (ApolloConfigNotification item: newNotifications) {
-                if (System.getProperty(Constants.SKYWALKING_NAMESPACE).equals(item.getNamespaceName())) {
-                    long notificationId = item.getNotificationId();
-                    if (notificationId > this.notificationId) {
-                        this.notificationId = notificationId;
-                    }
-                    // get latest config, and update
-                    ApolloConfiguration configuration = getLatestConfig();
-                    if (configuration == null) {
-                        return;
-                    }
-                    updateBooleanConfigValue(configuration.getConfigurations(), CONFIG_KEYS);
-                    logger.info("skyWalking config update success.");
-                    break;
+        try (CloseableHttpResponse response = HTTP_CLIENT.execute(httpGet)) {
+            if (response.getStatusLine().getStatusCode() == Constants.HTTP_200) {
+                // config have change
+                String result = EntityUtils.toString(response.getEntity());
+                if (result == null) {
+                    return;
                 }
+                Type type = new TypeToken<ArrayList<ApolloConfigNotification>>() { }.getType();
+                List<ApolloConfigNotification> newNotifications = gson.fromJson(result, type);
+                if (newNotifications == null || newNotifications.size() == 0) {
+                    return;
+                }
+                for (ApolloConfigNotification item: newNotifications) {
+                    if (System.getProperty(Constants.SKYWALKING_NAMESPACE).equals(item.getNamespaceName())) {
+                        long notificationId = item.getNotificationId();
+                        if (notificationId > this.notificationId) {
+                            this.notificationId = notificationId;
+                        }
+                        // get latest config, and update
+                        ApolloConfiguration configuration = getLatestConfig();
+                        if (configuration == null) {
+                            return;
+                        }
+                        updateBooleanConfigValue(configuration.getConfigurations(), CONFIG_KEYS);
+                        logger.info("skyWalking config update success.");
+                        break;
+                    }
+                }
+            } else if (response.getStatusLine().getStatusCode() == Constants.HTTP_304) {
+                // config have not change
+                return;
+            } else {
+                logger.info("apollo long pull http request status: {}, result: {}",
+                        response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity()));
             }
-        } else if (response.getStatusLine().getStatusCode() == Constants.HTTP_304) {
-            // config have not change
-            response.close();
-            return;
-        } else {
-            logger.info("apollo long pull http request status: {}, result: {}",
-                    response.getStatusLine().getStatusCode(), EntityUtils.toString(response.getEntity()));
+        } catch (Exception e) {
+            throw e;
         }
+
     }
 
     private ApolloConfiguration getLatestConfig() {
