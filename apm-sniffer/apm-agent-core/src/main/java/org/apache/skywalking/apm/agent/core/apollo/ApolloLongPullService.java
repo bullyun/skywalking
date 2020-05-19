@@ -133,6 +133,7 @@ public class ApolloLongPullService implements Runnable {
             }
         } else if (response.getStatusLine().getStatusCode() == Constants.HTTP_304) {
             // config have not change
+            response.close();
             return;
         } else {
             logger.info("apollo long pull http request status: {}, result: {}",
